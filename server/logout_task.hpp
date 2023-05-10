@@ -34,7 +34,7 @@ public:
       server->get_sender_fd()->erase(fd);
       pthread_rwlock_unlock(server->get_sender_fd_rwlock());
 
-      CRPMessage *msg = new CRPMessage(14 + 11, LOGIN, 0, 0, "logout success");
+      CRPMessage *msg = new CRPMessage(14 + 11, LOGOUT, 0, 0, "logout success");
       pthread_mutex_lock(&server->get_message_queue_mutex()[fd]);
       server->get_message_queue()[fd].push(msg);
       pthread_mutex_unlock(&server->get_message_queue_mutex()[fd]);
@@ -44,7 +44,7 @@ public:
       pthread_mutex_unlock(server->get_write_set_mutex());
       std::cout << "logout success" << std::endl;
     } else {
-      CRPMessage *msg = new CRPMessage(13 + 11, LOGIN, 0, 0, "no login");
+      CRPMessage *msg = new CRPMessage(13 + 11, LOGOUT, 0, 0, "no login");
       pthread_mutex_lock(&server->get_message_queue_mutex()[fd]);
       server->get_message_queue()[fd].push(msg);
       pthread_mutex_unlock(&server->get_message_queue_mutex()[fd]);

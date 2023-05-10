@@ -69,10 +69,13 @@ void Server::receive(CRP *c) {
       pool.submit(task);
       break;
     case CHAT:
+    case FILE_START:
+    case FILE_MID:
+    case FILE_END:
       data = new RouterTaskData{
-        .server_ptr = this, .message_ptr = message, .fd = c->get_fd()};
-        task = new RouterTask(data);
-        pool.submit(task);
+          .server_ptr = this, .message_ptr = message, .fd = c->get_fd()};
+      task = new RouterTask(data);
+      pool.submit(task);
       break;
     }
     message->DEBUG();
