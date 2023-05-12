@@ -34,6 +34,9 @@ void receive_messages(CRP *crp) {
         break;
       case FILE_START:
         fd = open((const char *)message.get_data(), O_CREAT | O_WRONLY, 777);
+        if (fd == -1) {
+          printf("open fail\n");
+        }
         break;
       case FILE_MID:
         write(fd, message.get_data(), message.get_length() - 11);
@@ -79,13 +82,16 @@ void send_messages(CRP *crp, uint32_t user_id) {
 
       int fd = open(message_text.c_str(), O_RDONLY);
       if (fd == -1) {
-        printf("open fail");
+        printf("open fail\n");
         continue;
       }
       char buffer[4096];
+      int l = message_text.find_last_of('/');
+      std::string fname = std::string("./save/").append(
+          message_text.substr(l + 1, message_text.length() - l));
 
-      CRPMessage message(11 + 4 + 1, OP_CODE::FILE_START, user_id, receiver,
-                         "test");
+      CRPMessage message(11 + fname.length() + 1, OP_CODE::FILE_START, user_id,
+                         receiver, fname.c_str());
       crp->send(&message);
 
       while (true) {
